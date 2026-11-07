@@ -1,0 +1,137 @@
+# .github/workflows/ci-cd.yml
+
+name: Build and Push Docker image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t amarjit12/node-app:latest .
+
+      - name: Push Docker image
+        run: docker push amarjit12/node-app:latest
+
+
+
+
+        // .dockerignore
+
+node_modules
+.env
+.git
+.gitignore
+
+
+
+# Dockerfile
+
+# Base image
+FROM node:18-alpine
+
+# Working directory
+WORKDIR /app
+
+# Copy package.json aur lock file
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --omit=dev
+
+# Copy baki code
+COPY . .
+
+# Expose port
+EXPOSE 5000
+
+# Start app
+CMD ["node", "index.js"]
+
+
+
+// index.js
+
+import express from 'express';
+import cors from 'cors';
+import "dotenv/config";
+
+const port = process.env.PORT || 5000; 
+
+const app = express();
+
+app.use(express.json());
+
+app.use(cors({
+    origin:"*"
+}));
+
+app.get("/",(req,res)=>{
+    try{
+        return res.status(200).json({success:true,message:"API working"});
+    }catch(err){
+        return res.status(500).json({success:false,message:"something went wrong"});
+    }
+});
+
+app.listen(port,()=>{
+    console.log(`server is running on port ${port}`);
+});
+
+
+
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0"
+  }
+}
+
+
+
+
+Aapko 4 kaam karne hain:
+
+Docker Hub par repo banana (Taaki image save ho sake).
+
+Docker Hub ka token banana (Taaki GitHub bina password ke login kar sake).
+
+GitHub par secrets save karna (Taaki GitHub ko token mile).
+
+GitHub par code push karna (Taaki pipeline trigger ho).
+
+Chaliye ek-ek karke karte hain:
