@@ -30,6 +30,15 @@ app.get("/test",(req,res)=>{
     }
 });
 
+
+app.get("/v1",(req,res)=>{
+    try{
+        return res.status(200).json({success:true,message:"API working",data:{email:"Amarjit@gmail.com"}});
+    }catch(err){
+        return res.status(500).json({success:false,message:"something went wrong"});
+    }
+});
+
 app.listen(port,()=>{
     console.log(`server is running on port ${port}`);
 });
