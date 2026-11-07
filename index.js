@@ -39,6 +39,14 @@ app.get("/v1",(req,res)=>{
     }
 });
 
+app.get("/v2",(req,res)=>{
+    try{
+        return res.status(200).json({success:true,message:"API working",data:{password:"12345"}});
+    }catch(err){
+        return res.status(500).json({success:false,message:"something went wrong"});
+    }
+});
+
 app.listen(port,()=>{
     console.log(`server is running on port ${port}`);
 });

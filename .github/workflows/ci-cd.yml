@@ -34,3 +34,9 @@ jobs:
 
       - name: Push Docker image
         run: docker push amarjit12/node-application:latest
+
+
+      # ===== RENDER DEPLOY TRIGGER =====
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
